@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Laundry Spot BI Services</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" href="images/Laundry Spot Logo (2).png">
+  <style>
+    :root {
+      --bg:        #F5ECD8;
+      --bg2:       #EDE0C8;
+      --cream:     #EDE0CC;
+      --dark:      #1e1a14;
+      --dark2:     #2e2820;
+      --gold:      #A0720A;
+      --gold2:     #C8920A;
+      --muted:     #8a7a62;
+      --border:    rgba(140,100,30,0.18);
+      --card-bg:   #FBF5E8;
+      --nav-h:     68px;
+      --line:      rgba(140,100,30,0.18);
+      --ink:       #1e1a14;
+      --teal:      #2E8B7E;
+      --berry:     #B0435F;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: linear-gradient(180deg, #C49A3A 0%, #8B6F2F 40%, #2E2E2E 100%);
+      color: var(--dark);
+      overflow-x: hidden;
+    }
+
+    /* ─── NOISE GRAIN OVERLAY ─── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.04;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ─── NAV ─── */
+    .navbar {
+      background: rgba(245,236,216,0.94);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      height: var(--nav-h);
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+    }
+    .navbar-brand {
+      font-family: 'Fraunces', serif;
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--dark) !important;
+      letter-spacing: 0.5px;
+      text-decoration: none;
+    }
+    .navbar-nav .nav-link {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--muted) !important;
+      padding: 8px 14px !important;
+      border-radius: 6px;
+      transition: color 0.2s, background 0.2s;
+    }
+    .navbar-nav .nav-link:hover,
+    .navbar-nav .nav-link.active { color: var(--dark) !important; background: rgba(160,114,10,0.1); }
+    .navbar-toggler { border-color: var(--muted); }
+    .navbar-toggler-icon { background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(200,147,42,0.8)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e"); }
+
+    /* ─── CINEMATIC HERO ─── */
+    .hero {
+      margin-top: var(--nav-h);
+      height: 95vh;
+      min-height: 500px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: flex-end;
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background: url('images/hero2.jpg') center 30% / cover no-repeat;
+      transform: scale(1.06);
+      animation: heroZoom 18s ease-in-out infinite alternate;
+    }
+    @keyframes heroZoom {
+      from { transform: scale(1.06) translateY(0px); }
+      to   { transform: scale(1.12) translateY(-20px); }
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        165deg,
+        rgba(10, 9, 6, 0.318) 0%,
+        rgba(10, 9, 6, 0.433) 40%,
+        rgba(0, 0, 0, 0.97) 100%
+      );
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      padding: 0 7% 5rem;
+      max-width: 700px;
+    }
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 10px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--gold2);
+      font-weight: 500;
+      margin-bottom: 1.2rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.2s forwards;
+    }
+    .hero-tag::before {
+      content: '';
+      display: block;
+      width: 28px; height: 1px;
+      background: var(--gold);
+    }
+    .hero h1 {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(52px, 8vw, 96px);
+      font-weight: 300;
+      line-height: 1;
+      color: #fff;
+      margin-bottom: 1.4rem;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.4s forwards;
+    }
+    .hero h1 em {
+      font-style: italic;
+      font-weight: 600;
+      color: var(--gold2);
+    }
+    .hero-sub {
+      font-size: 14px;
+      color: rgba(237,224,204,0.65);
+      font-weight: 300;
+      line-height: 1.7;
+      max-width: 380px;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.6s forwards;
+    }
+    .hero-scroll {
+      position: absolute;
+      bottom: 2.5rem;
+      right: 6%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      font-size: 9px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--muted);
+      z-index: 2;
+    }
+    .hero-scroll-line {
+      width: 1px;
+      height: 48px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+      animation: scrollLine 2s ease-in-out infinite;
+    }
+    @keyframes scrollLine {
+      0%, 100% { transform: scaleY(1); opacity: 1; }
+      50% { transform: scaleY(0.4); opacity: 0.3; }
+    }
+
+    /* ─── STICKY CATEGORY STRIP ─── */
+    .cat-strip {
+      position: sticky;
+      top: var(--nav-h);
+      z-index: 90;
+      background: rgba(245,236,216,0.97);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 0;
+      padding: 0 5%;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .cat-strip::-webkit-scrollbar { display: none; }
+    .cat-btn {
+      flex-shrink: 0;
+      padding: 16px 20px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      transition: color 0.2s, border-color 0.2s;
+      white-space: nowrap;
+    }
+    .cat-btn:hover { color: var(--dark); }
+    .cat-btn.on { color: var(--gold2); border-bottom-color: var(--gold); }
+
+    /* ─── SECTION WRAPPER ─── */
+    .menu-wrap { padding: 0 0 6rem; }
+
+    .menu-section { padding: 4rem 0 1rem; }
+
+    .sec-header {
+      padding: 0 5%;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+      gap: 16px;
+    }
+    .sec-header-left {}
+    .sec-eyebrow {
+      font-size: 9px;
+      letter-spacing: 3.5px;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .sec-title {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(28px, 4vw, 40px);
+      font-weight: 300;
+      color: var(--dark);
+      line-height: 1;
+    }
+    .sec-title em { font-style: italic; font-weight: 600; }
+    .sec-nav {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .arrow-btn {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 13px;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+    }
+    .arrow-btn:hover { background: var(--gold); color: #fff; border-color: var(--gold); }
+
+    /* ─── FEATURED BANNER between sections ─── */
+    .feat-banner {
+      margin: 3rem 5%;
+      border-radius: 20px;
+      overflow: hidden;
+      position: relative;
+      height: 220px;
+      display: flex;
+      align-items: center;
+    }
+    .feat-banner-bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      transform: scale(1.05);
+      transition: transform 0.6s ease;
+    }
+    .feat-banner:hover .feat-banner-bg { transform: scale(1.1); }
+    .feat-banner-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(10,9,6,0.88) 40%, rgba(10,9,6,0.2) 100%);
+    }
+    .feat-banner-content {
+      position: relative;
+      z-index: 2;
+      padding: 0 2.5rem;
+    }
+    .feat-banner-label {
+      font-size: 9px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .feat-banner-title {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(22px, 3vw, 32px);
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 6px;
+      line-height: 1.1;
+    }
+    .feat-banner-title em { font-style: italic; color: var(--gold2); }
+    .feat-banner-note {
+      font-size: 12px;
+      color: rgba(237,224,204,0.6);
+      font-weight: 300;
+    }
+
+    /* ─── HOURS GRID ─── */
+    .hours-grid {
+      margin: 2rem 5% 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      background: var(--card-bg);
+    }
+    .h-cell {
+      padding: 24px 26px;
+      border-right: 1px solid var(--border);
+      position: relative;
+    }
+    .h-cell:last-child { border-right: none; }
+    .h-cell::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 26px; right: 26px;
+      height: 1px;
+      background: linear-gradient(to right, var(--gold), transparent);
+      opacity: 0.4;
+    }
+    .h-label {
+      font-size: 9px;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .h-val {
+      font-family: 'Fraunces', serif;
+      font-size: 17px;
+      font-weight: 300;
+      color: var(--dark);
+    }
+
+    /* ─── LEGEND ─── */
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding: 2.5rem 5% 0;
+    }
+    .leg-item { display: flex; align-items: center; gap: 7px; font-size: 11px; color: var(--muted); }
+
+    /* ─── FOOTER ─── */
+    footer {
+      margin-top: 4rem;
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      padding: 36px 5%;
+    }
+    .ft-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .ft-brand { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 600; color: var(--dark); }
+    .ft-links { display: flex; gap: 22px; flex-wrap: wrap; }
+    .ft-links a { color: var(--muted); text-decoration: none; font-size: 11px; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; transition: color 0.2s; }
+    .ft-links a:hover { color: var(--gold2); }
+    .ft-bottom { max-width: 1100px; margin: 18px auto 0; padding-top: 16px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+    .ft-bottom p { font-size: 11px; color: var(--muted); margin: 0; }
+    .ft-socials a { color: var(--muted); margin-left: 16px; font-size: 13px; transition: color 0.2s; }
+    .ft-socials a:hover { color: var(--gold2); }
+
+    /* ─── UTILS ─── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 576px) {
+      .p-card { flex: 0 0 220px; }
+      .feat-banner { height: 170px; }
+      .h-cell { border-right: none; border-bottom: 1px solid var(--border); }
+      .h-cell:last-child { border-bottom: none; }
+    }
+    /* Pricelist*/
+  .pricing-wrap{background:var(--bg2); border-radius:20px; border:1px solid var(--gold); padding:44px; margin:0 5% 3rem;}
+  .pricing-grid{display:grid; grid-template-columns:1fr 1fr; gap:0 56px;}
+  .price-block{margin-bottom:30px;}
+  .price-head{display:flex; align-items:center; gap:10px; margin-bottom:13px;}
+  .price-icon{width:26px; height:26px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:14px;}
+  .price-title{font-family:Georgia,serif; font-weight:700; font-size:19px; white-space:nowrap;}
+  .price-rule{flex:1; height:1px; background:var(--gold);}
+  .popular-tag{
+    font-size:9.5px; font-weight:700; letter-spacing:0.8px; background:var(--gold); color:#3A2A05;
+    padding:3px 8px; border-radius:999px; white-space:nowrap;
+  }
+  table.price{width:100%; border-collapse:collapse; font-size:14px;}
+  table.price tr{border-bottom:1px solid var(--line);}
+  table.price tr:last-child{border-bottom:none;}
+  table.price td{padding:7px 2px;}
+  table.price td:first-child{font-weight:500;}
+  table.price td:last-child{text-align:right; font-weight:700; font-variant-numeric:tabular-nums;}
+  table.price.teal td:last-child{color:var(--teal);}
+  table.price.berry td:last-child{color:var(--berry);}
+  table.price.gold td:last-child{color:#B5872A;}
+  table.price.ink td:last-child{color:var(--ink);}
+
+    /* ---------- HOW IT WORKS ---------- */
+  .steps{display:grid; grid-template-columns:repeat(3,1fr); gap:26px; margin:0 5% 3rem;}
+  .step{position:relative; padding-left:2px;}
+  .step .num{
+    font-family:Georgia,serif; font-weight:700; font-size:34px; color:var(--gold); margin-bottom:10px;
+  }
+  .step h3{font-size:17px; margin-bottom:8px; color:var(--bg);}
+  .step p{color:var(--bg2); font-size:13.5px; margin:0;}
+
+  /* ---------- CONTACT ---------- */
+  .contact-grid{display:grid; grid-template-columns:1fr 1fr; gap:36px;}
+  .contact-card{background:var(--bg2); border:1px solid var(--gold2); border-radius:16px; padding:30px;}
+  .contact-card h3{font-size:14px; letter-spacing:1.2px; text-transform:uppercase; color:var(--gold2); margin-bottom:16px;}
+  .contact-row{display:flex; justify-content:space-between; font-size:14px; padding:9px 0; border-bottom:1px solid var(--gold2);}
+  .contact-row:last-child{border-bottom:none;}
+  .contact-line{font-size:14px; padding:9px 0; border-bottom:1px solid var(--gold2);}
+  .contact-line:last-child{border-bottom:none;}
+  .contact-line b{display:block; font-size:11px; text-transform:uppercase; letter-spacing:0.6px; color:var(--bg2); margin-bottom:2px;}
+
+ /* ---------- CTA BAND ---------- */
+  .cta-band{
+    background:linear-gradient(135deg,var(--teal),#227A70); color:#fff;
+    border-radius:20px; padding:44px; display:flex; align-items:center; justify-content:space-between;
+    gap:24px; flex-wrap:wrap;
+  }
+  .cta-band h2{font-size:26px; margin-bottom:8px;}
+  .cta-band p{color:#DFF3F0; font-size:14px; margin:0; max-width:420px;}
+
+  /* ---------- RESPONSIVE ---------- */
+  @media(max-width:860px){
+    nav.links{display:none;}
+    .services-grid{grid-template-columns:1fr 1fr;}
+    .steps{grid-template-columns:1fr;}
+    .pricing-grid{grid-template-columns:1fr;}
+    .contact-grid{grid-template-columns:1fr;}
+  }
+  @media(max-width:560px){
+    .services-grid{grid-template-columns:1fr;}
+    .hero-copy h1{font-size:32px;}
+    .pricing-wrap{padding:26px;}
+  }
+
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="index.html">Laundry Spot</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-tag">Est. 2026 · Letlhakane · Letsibogo</div>
+      <h1>Laundry<br><em>Spot</em></h1>
+      <p class="hero-sub">We provide top-quality laundry services in Letlhakane.</p>
+    </div>
+    <div class="hero-scroll">
+      <div class="hero-scroll-line"></div>
+      <span>Scroll</span>
+    </div>
+  </section>
+
+  <!-- STICKY CATEGORY STRIP -->
+  <div class="cat-strip" id="catStrip">
+    <button class="cat-btn on" data-id="catalog">Catalog</button>
+    <button class="cat-btn" data-id="about">About Us</button>
+    <button class="cat-btn" data-id="contact">Contact</button>
+    <button class="cat-btn" data-id="specials">Specials</button>
+  </div>
+
+  <main class="menu-wrap">
+
+    <!-- ═══ CATALOG ═══ -->
+    <section class="menu-section" id="catalog">
+      <div class="sec-header">
+        <div class="sec-header-left">
+          <div class="sec-eyebrow">What we offer</div>
+          <div class="sec-title"> <em>Our</em> Catalog</div>
+        </div>
+      </div>
+      <div class="pricing-wrap">
+      <div class="pricing-grid">
+
+        <div>
+          <div class="price-block">
+            <div class="price-head">
+              <div class="price-icon" style="background:rgba(224,169,58,0.15);">🧺</div>
+              <div class="price-title">Monthly Fees</div>
+              <div class="price-rule"></div>
+            </div>
+            <table class="price gold">
+              <tr><td>X-Small Basket</td><td>P170.00</td></tr>
+              <tr><td>Small Basket</td><td>P290.00</td></tr>
+              <tr><td>Medium Basket</td><td>P370.00</td></tr>
+              <tr><td>Large Basket</td><td>P440.00</td></tr>
+              <tr><td>X-Large Basket</td><td>P520.00</td></tr>
+            </table>
+          </div>
+
+          <div class="price-block">
+            <div class="price-head">
+              <div class="price-icon" style="background:rgba(15,41,66,0.06);">🏠</div>
+              <div class="price-title">Cleaning</div>
+              <div class="price-rule"></div>
+            </div>
+            <table class="price ink">
+              <tr><td>Room</td><td>P60.00</td></tr>
+              <tr><td>2 and Half</td><td>P120.00</td></tr>
+              <tr><td>Bachelor Pad</td><td>P120.00</td></tr>
+              <tr><td>2 Beds</td><td>P250.00</td></tr>
+              <tr><td>3 Beds</td><td>P275.00</td></tr>
+              <tr><td>4 Beds</td><td>P300.00</td></tr>
+            </table>
+          </div>
+
+          <div class="price-block">
+            <div class="price-head">
+              <div class="price-icon" style="background:rgba(217,79,99,0.12);">🎉</div>
+              <div class="price-title">Events Cleaning</div>
+              <div class="price-rule"></div>
+            </div>
+            <table class="price ink">
+              <tr><td>Birthdays for Kids</td><td>P250.00</td></tr>
+              <tr><td>B/D for Adults</td><td>P350.00</td></tr>
+              <tr><td>Weddings</td><td>P400.00</td></tr>
+            </table>
+          </div>
+
+          <div class="price-block" style="margin-bottom:0;">
+            <div class="price-head">
+              <div class="price-icon" style="background:rgba(46,155,143,0.12);">🛏️</div>
+              <div class="price-title">Bedding &amp; Blankets</div>
+              <div class="price-rule"></div>
+            </div>
+            <table class="price ink">
+              <tr><td>Fleece</td><td>P30.00 – P50.00</td></tr>
+              <tr><td>Duvet</td><td>P80.00</td></tr>
+              <tr><td>Light Blanket</td><td>P100.00</td></tr>
+              <tr><td>Mooi Mooi</td><td>P120.00 – P140.00</td></tr>
+              <tr><td>Sports Kits</td><td>P90.00</td></tr>
+              <tr><td>Shoe Wash</td><td>P40.00</td></tr>
+            </table>
+          </div>
+        </div>
+
+        <div>
+          <div class="price-block">
+            <div class="price-head">
+              <div class="price-icon" style="background:rgba(46,155,143,0.15);">🫧</div>
+              <div class="price-title">Wash &amp; Fold</div>
+              <div class="popular-tag">MOST POPULAR</div>
+              <div class="price-rule"></div>
+            </div>
+            <table class="price teal">
+              <tr><td>X-Small</td><td>P50.00</td></tr>
+              <tr><td>Small</td><td>P80.00</td></tr>
+              <tr><td>Medium</td><td>P100.00</td></tr>
+              <tr><td>Large</td><td>P120.00</td></tr>
+              <tr><td>Extra Large</td><td>P140.00</td></tr>
+            </table>
+          </div>
+
+          <div class="price-block">
+            <div class="price-head">
+              <div class="price-icon" style="background:rgba(217,79,99,0.15);">🔥</div>
+              <div class="price-title">Wash &amp; Iron</div>
+              <div class="price-rule"></div>
+            </div>
+            <table class="price berry">
+              <tr><td>X-Small</td><td>P75.00</td></tr>
+              <tr><td>Small</td><td>P105.00</td></tr>
+              <tr><td>Medium</td><td>P140.00</td></tr>
+              <tr><td>Large</td><td>P170.00</td></tr>
+              <tr><td>Extra Large</td><td>P200.00</td></tr>
+            </table>
+          </div>
+
+          <div class="price-block" style="margin-bottom:0;">
+            <div class="price-head">
+              <div class="price-icon" style="background:rgba(217,79,99,0.15);">👔</div>
+              <div class="price-title">Iron Only</div>
+              <div class="price-rule"></div>
+            </div>
+            <table class="price berry">
+              <tr><td>X-Small</td><td>P30.00</td></tr>
+              <tr><td>Small</td><td>P40.00</td></tr>
+              <tr><td>Medium</td><td>P55.00</td></tr>
+              <tr><td>Large</td><td>P70.00</td></tr>
+              <tr><td>Extra Large</td><td>P85.00</td></tr>
+            </table>
+          </div>
+
+          <div class="cta-band" style="margin-top:30px;">
+            <div>
+              <h2>Ready for a spotless load?</h2>
+              <p>Free pickup &amp; drop around Letlhakane. Book on WhatsApp and we'll collect your laundry.</p>
+            </div>
+            <a class="btn" style="background:var(--gold); color:#3A2A05;" href="https://wa.me/26774185055" target="_blank" rel="noopener">WhatsApp +267 74185055</a>
+          </div>
+        </div>
+      </div>
+      </div>
+    </section>
+
+    <!-- FEATURED BANNER: Free Delivery -->
+    <div class="feat-banner">
+      <div class="feat-banner-bg" style="background-image:url('images/delivery.jpg')"></div>
+      <div class="feat-banner-overlay"></div>
+      <div class="feat-banner-content">
+        <div class="feat-banner-label">free pickup &amp; delivery</div>
+        <div class="feat-banner-title">We <em>Come</em> To You</div>
+        <div class="feat-banner-note">Free pickup and drop-off anywhere around Letlhakane.</div>
+      </div>
+    </div>
+
+    <!-- ═══ About Us ═══ -->
+    <section class="menu-section" id="about">
+      <div class="sec-header">
+        <div class="sec-header-left">
+          <div class="sec-eyebrow">Who we are</div>
+          <div class="sec-title"> <em>About</em> Us</div>
+        </div>
+      </div>
+
+      <div class="pricing-wrap" style="margin:0 5% 2.5rem; padding:36px 44px;">
+        <p style="font-size:15px; line-height:1.85; color:var(--ink); max-width:760px;">
+          Laundry Spot is a pickup, wash, fold &amp; delivery service based in Letsibogo Ward, Letlhakane.
+          We started Laundry Spot to give our community a simpler way to keep homes and wardrobes fresh —
+          no queues, no hand-scrubbing, just a WhatsApp message away. From everyday wash &amp; fold to
+          ironing, bedding, and full house cleaning, every load is handled with the same care we'd give our own.
+        </p>
+      </div>
+
+      <div class="contact-grid" style="padding:0 5%;">
+        <div class="contact-card">
+          <h3>Local &amp; Trusted</h3>
+          <p style="font-size:13.5px; line-height:1.7; color:var(--ink);">Rooted in Letsibogo Ward, Letlhakane — proudly serving our neighbours and community.</p>
+        </div>
+        <div class="contact-card">
+          <h3>Free Pickup &amp; Delivery</h3>
+          <p style="font-size:13.5px; line-height:1.7; color:var(--ink);">We collect and drop off your laundry anywhere around Letlhakane, at no extra cost.</p>
+        </div>
+        <div class="contact-card">
+          <h3>Careful, Quality Care</h3>
+          <p style="font-size:13.5px; line-height:1.7; color:var(--ink);">Every basket is washed, folded, or ironed with real attention to detail — never rushed.</p>
+        </div>
+        <div class="contact-card">
+          <h3>Easy WhatsApp Booking</h3>
+          <p style="font-size:13.5px; line-height:1.7; color:var(--ink);">No apps, no forms — just send us a message and we'll take it from there.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURED BANNER: House Cleaning -->
+    <div class="feat-banner">
+      <div class="feat-banner-bg" style="background-image:url('images/house_cleaning.jpg')"></div>
+      <div class="feat-banner-overlay"></div>
+      <div class="feat-banner-content">
+        <div class="feat-banner-label">also available</div>
+        <div class="feat-banner-title">House <em>Cleaning</em></div>
+        <div class="feat-banner-note">From single rooms to full homes — book a clean along with your laundry.</div>
+      </div>
+    </div>
+
+        <!-- ═══ How it works ═══ -->
+    <section class="menu-section" id="how-it-works">
+      <div class="sec-header">
+        <div class="sec-header-left">
+          <div class="sec-eyebrow">How it works</div>
+          <div class="sec-title"> <em>Our</em> Process</div>
+        </div>
+      </div>
+      <div class="steps">
+      <div class="step">
+        <div class="num">01</div>
+        <h3>Message us on WhatsApp</h3>
+        <p>Tell us your basket size or service, and where to collect from around Letlhakane.</p>
+      </div>
+      <div class="step">
+        <div class="num">02</div>
+        <h3>We pick up &amp; get to work</h3>
+        <p>Free pickup around Letlhakane. Your laundry is washed, ironed, or cleaned with care.</p>
+      </div>
+      <div class="step">
+        <div class="num">03</div>
+        <h3>Fresh laundry, delivered</h3>
+        <p>We drop everything back to you — folded, pressed, and ready to use.</p>
+      </div>
+    </div>
+
+    </section>
+
+    <!-- ═══ Contact Us ═══ -->
+    <section class="menu-section" id="contact">
+      <div class="sec-header">
+        <div class="sec-header-left">
+          <div class="sec-eyebrow">Contact Us</div>
+          <div class="sec-title">Get <em>In</em> Touch</div>
+        </div>
+      </div>
+      <div class="contact-grid" style="padding:0 5%;">
+      <div class="contact-card">
+        <h3>Operating Hours</h3>
+        <div class="contact-row"><span>Monday – Friday</span><span>8AM – 6PM</span></div>
+        <div class="contact-row"><span>Saturday</span><span>8AM – 5PM</span></div>
+        <div class="contact-row"><span>Sunday</span><span>9AM – 3PM</span></div>
+      </div>
+      <div class="contact-card">
+        <h3>Contact Us</h3>
+        <div class="contact-line"><b>Call</b>+267 75199634 / 76852201</div>
+        <div class="contact-line"><b>WhatsApp</b>+267 74185055</div>
+        <div class="contact-line"><b>Email</b>laundryspot@gmail.com</div>
+        <div class="contact-line"><b>Location</b>Letsibogo Ward, Letlhakane — on the Phezulu Bar turn off Shell Road</div>
+      </div>
+      </div>
+    </section>
+
+    <!-- FEATURED BANNER: Specials -->
+    <div class="feat-banner">
+      <div class="feat-banner-bg" style="background-image:url('images/special.webp')"></div>
+      <div class="feat-banner-overlay"></div>
+      <div class="feat-banner-content">
+        <div class="feat-banner-label">limited time offer</div>
+        <div class="feat-banner-title">Special <em>Offers</em></div>
+        <div class="feat-banner-note">Same great quality — lower prices.</div>
+      </div>
+    </div>
+
+    <!-- ═══ SPECIALS ═══ -->
+    <section class="menu-section" id="specials">
+      <div class="sec-header">
+        <div class="sec-header-left">
+          <div class="sec-eyebrow">specials</div>
+          <div class="sec-title"> Affordable <em>Deals</em> </div>
+        </div>
+      </div>
+
+      <div class="pricing-wrap" style="margin:0 5%; text-align:center; padding:56px 44px;">
+        <div style="font-size:32px; margin-bottom:14px;">🧺</div>
+        <div style="font-family:'Fraunces',serif; font-size:22px; font-weight:600; color:var(--ink); margin-bottom:10px;">No specials running right now</div>
+        <p style="font-size:14px; color:var(--muted); max-width:440px; margin:0 auto 22px; line-height:1.7;">
+          We don't have any deals up at the moment, but check back soon — or message us directly and we'll let you know as soon as one drops.
+        </p>
+        <a class="btn" style="display:inline-block; background:var(--gold); color:#3A2A05; padding:12px 26px; border-radius:30px; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; text-decoration:none;" href="https://wa.me/26774185055" target="_blank" rel="noopener">Ask on WhatsApp</a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="ft-inner">
+      <div class="ft-brand">Laundry Spot</div>
+      <div class="ft-links">
+        <p>We handle the dirty work — Letsibogo Ward, Letlhakane.</p>
+      </div>
+    </div>
+    <div class="ft-bottom">
+      <p>&copy; 2026 Laundry Spot. All rights reserved.</p>
+      <div class="ft-socials">
+        <a href="https://www.facebook.com/Laundryspotbiservice" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://wa.me/26774185055" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        <a href="mailto:laundryspot@gmail.com" aria-label="Email"><i class="fas fa-envelope"></i></a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"></script>
+
+  <script>
+    // ── CATEGORY TAB SCROLL ───────────────────────────────────
+    const sections = ['catalog','about','how-it-works','contact','specials'];
+    const tabs = document.querySelectorAll('.cat-btn');
+    const NAV_OFFSET = 68 + 50;
+
+    tabs.forEach(btn => {
+      btn.addEventListener('click', () => {
+        tabs.forEach(b => b.classList.remove('on'));
+        btn.classList.add('on');
+        const el = document.getElementById(btn.dataset.id);
+        if (el) window.scrollTo({ top: el.offsetTop - NAV_OFFSET, behavior: 'smooth' });
+      });
+    });
+
+    window.addEventListener('scroll', () => {
+      let cur = sections[0];
+      sections.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && window.scrollY >= el.offsetTop - NAV_OFFSET - 60) cur = id;
+      });
+      tabs.forEach(t => t.classList.toggle('on', t.dataset.id === cur));
+    });
+
+    // ── SCROLL-IN ANIMATION for price blocks & cards ─────────
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          e.target.style.animationDelay = (i % 4) * 0.08 + 's';
+          e.target.classList.add('visible');
+          obs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.price-block, .contact-card').forEach(c => {
+      c.style.opacity = '0';
+      c.style.transform = 'translateY(20px)';
+      c.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+      obs.observe(c);
+    });
+
+    const revealStyle = document.createElement('style');
+    revealStyle.textContent = '.visible { opacity: 1 !important; transform: translateY(0) !important; }';
+    document.head.appendChild(revealStyle);
+  </script>
+</body>
+</html>
